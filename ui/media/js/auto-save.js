@@ -59,7 +59,7 @@ const SETTINGS_IDS_LIST = [
     "enable_vae_tiling",
 ]
 
-const IGNORE_BY_DEFAULT = ["prompt"]
+const IGNORE_BY_DEFAULT = []
 
 if (!testDiffusers.checked) {
     SETTINGS_IDS_LIST.push("hypernetwork_model")
