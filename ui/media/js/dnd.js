@@ -144,7 +144,9 @@ const TASK_MAPPING = {
     init_image: {
         name: "Initial Image",
         setUI: (init_image) => {
-            initImagePreview.src = init_image
+            if (init_image) {
+                initImagePreview.src = init_image
+            }
         },
         readUI: () => initImagePreview.src,
         parse: (val) => val,
@@ -506,7 +508,7 @@ function restoreTaskToUI(task, fieldsToSkip) {
     if (IMAGE_REGEX.test(initImagePreview.src) && task.reqBody.init_image == undefined) {
         // hide source image
         initImageClearBtn.dispatchEvent(new Event("click"))
-    } else if (task.reqBody.init_image !== undefined) {
+    } else if (task.reqBody.init_image != undefined) {
         // listen for inpainter loading event, which happens AFTER the main image loads (which reloads the inpainter)
         initImagePreview.addEventListener(
             "load",

@@ -27,6 +27,7 @@ TASK_TEXT_MAPPING = {
     "prompt": "Prompt",
     "negative_prompt": "Negative Prompt",
     "seed": "Seed",
+    "init_image": "Initial Image",
     "use_stable_diffusion_model": "Stable Diffusion model",
     "clip_skip": "Clip Skip",
     "use_controlnet_model": "ControlNet model",
@@ -146,6 +147,7 @@ def save_images_to_disk(
         file_number,
         now=now,
     )
+    hasInitImage = any(obj["init_image"] is not None for obj in metadata_entries)
 
     if task_data.show_only_filtered_image or filtered_images is images:
         save_images(
@@ -158,7 +160,7 @@ def save_images_to_disk(
         )
         if save_data.metadata_output_format:
             for metadata_output_format in save_data.metadata_output_format.split(","):
-                if metadata_output_format.lower() in ["json", "txt", "embed"]:
+                if metadata_output_format.lower() in ["json", "txt"]:
                     save_dicts(
                         metadata_entries,
                         save_dir_path,
@@ -166,6 +168,24 @@ def save_images_to_disk(
                         output_format=metadata_output_format,
                         file_format=output_format.output_format,
                     )
+                elif hasInitImage:
+                    if metadata_output_format.lower() == "if":
+                        save_dicts(
+                            metadata_entries,
+                            save_dir_path,
+                            file_name=make_filename,
+                            output_format="json",
+                            file_format=output_format.output_format,
+                        )
+                elif metadata_output_format.lower() == "embed":
+                    save_dicts(
+                        metadata_entries,
+                        save_dir_path,
+                        file_name=make_filename,
+                        output_format=metadata_output_format,
+                        file_format=output_format.output_format,
+                    )
+
     else:
         make_filter_filename = make_filename_callback(
             app_config.get("filename_format", "$p_$tsb64"),
@@ -194,11 +214,28 @@ def save_images_to_disk(
         )
         if save_data.metadata_output_format:
             for metadata_output_format in save_data.metadata_output_format.split(","):
-                if metadata_output_format.lower() in ["json", "txt", "embed"]:
+                if metadata_output_format.lower() in ["json", "txt"]:
                     save_dicts(
                         metadata_entries,
                         save_dir_path,
                         file_name=make_filter_filename,
+                        output_format=metadata_output_format,
+                        file_format=output_format.output_format,
+                    )
+                elif hasInitImage:
+                    if metadata_output_format.lower() == "if":
+                        save_dicts(
+                            metadata_entries,
+                            save_dir_path,
+                            file_name=make_filename,
+                            output_format="json",
+                            file_format=output_format.output_format,
+                        )
+                elif metadata_output_format.lower() == "embed":
+                    save_dicts(
+                        metadata_entries,
+                        save_dir_path,
+                        file_name=make_filename,
                         output_format=metadata_output_format,
                         file_format=output_format.output_format,
                     )

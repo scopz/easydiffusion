@@ -68,7 +68,7 @@ var PARAMETERS = [
         id: "metadata_output_format",
         type: ParameterType.select,
         label: "Metadata format",
-        note: "will be saved to disk in this format",
+        note: "Will be saved to disk in this format. Embed won't be saved if metadata contains input image.",
         default: "txt",
         options: [
             {
@@ -94,6 +94,10 @@ var PARAMETERS = [
             {
                 value: "embed,json",
                 label: "embed & json",
+            },
+            {
+                value: "embed,if",
+                label: "embed & json only if used input image",
             },
         ],
     },
