@@ -505,7 +505,7 @@ function showImages(reqBody, res, outputContainer, livePreview) {
                     },
                 ],
                 { text: "Make Similar Images", on_click: onMakeSimilarClick },
-                { text: "Draw another 25 steps", on_click: onContinueDrawingClick },
+                { text: "Draw with extra steps", on_click: onContinueDrawingClick },
                 [
                     { html: '<i class="fa-solid fa-undo"></i> Undo', on_click: onUndoFilter },
                     { html: '<i class="fa-solid fa-redo"></i> Redo', on_click: onRedoFilter },
@@ -988,9 +988,12 @@ function onFixFacesClick(req, img, e, tools) {
 }
 
 function onContinueDrawingClick(req, img) {
-    enqueueImageVariationTask(req, img, {
-        num_inference_steps: parseInt(req.num_inference_steps) + 25,
-    })
+    const stepsStr = parseInt(prompt("How many extra steps do you want to add?"))
+    if (stepsStr) {
+        enqueueImageVariationTask(req, img, {
+            num_inference_steps: parseInt(req.num_inference_steps) + stepsStr,
+        })
+    }
 }
 
 function makeImage() {
