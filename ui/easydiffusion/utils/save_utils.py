@@ -22,6 +22,8 @@ from sdkit.models.model_loader.embeddings import get_embedding_token
 filename_regex = re.compile("[^a-zA-Z0-9._-]")
 img_number_regex = re.compile("([0-9]{5,})")
 
+files_saved = 0
+
 # keep in sync with `ui/media/js/dnd.js`
 TASK_TEXT_MAPPING = {
     "prompt": "Prompt",
@@ -134,6 +136,7 @@ def save_images_to_disk(
     output_format: OutputFormatData,
     save_data: SaveToDiskData,
 ):
+    global files_saved
     now = time.time()
     app_config = app.getConfig()
     folder_format = app_config.get("folder_format", "$id")
@@ -146,7 +149,9 @@ def save_images_to_disk(
         task_data,
         file_number,
         now=now,
+        number=files_saved,
     )
+    files_saved += 1
     hasInitImage = any(obj["init_image"] is not None for obj in metadata_entries)
 
     if task_data.show_only_filtered_image or filtered_images is images:
@@ -194,7 +199,9 @@ def save_images_to_disk(
             file_number,
             now=now,
             suffix="filtered",
+            number=files_saved,
         )
+        files_saved += 1
 
         save_images(
             images,
@@ -342,6 +349,7 @@ def make_filename_callback(
     folder_img_number: int,
     suffix=None,
     now=None,
+    number=None,
 ):
     if now is None:
         now = time.time()
@@ -349,8 +357,7 @@ def make_filename_callback(
     def make_filename(i):
         name = format_file_name(filename_format, req, task_data, now, i, folder_img_number)
         name = name if suffix is None else f"{name}_{suffix}"
-
-        return name
+        return name if number is None else f"{number}_{name}"
 
     return make_filename
 
