@@ -22,7 +22,8 @@ from sdkit.models.model_loader.embeddings import get_embedding_token
 filename_regex = re.compile("[^a-zA-Z0-9._-]")
 img_number_regex = re.compile("([0-9]{5,})")
 
-files_saved = 0
+seed_index = {}
+index_count = {}
 
 # keep in sync with `ui/media/js/dnd.js`
 TASK_TEXT_MAPPING = {
@@ -136,12 +137,12 @@ def save_images_to_disk(
     output_format: OutputFormatData,
     save_data: SaveToDiskData,
 ):
-    global files_saved
     now = time.time()
     app_config = app.getConfig()
     folder_format = app_config.get("folder_format", "$id")
     save_dir_path = os.path.join(save_data.save_to_disk_path, format_folder_name(folder_format, req, task_data))
     metadata_entries = get_metadata_entries_for_request(req, task_data, models_data, output_format, save_data)
+    prefix = generateNewPrefix(metadata_entries)
     file_number = calculate_img_number(save_dir_path, task_data)
     make_filename = make_filename_callback(
         app_config.get("filename_format", "$p_$tsb64"),
@@ -149,9 +150,8 @@ def save_images_to_disk(
         task_data,
         file_number,
         now=now,
-        number=files_saved,
+        prefix=prefix,
     )
-    files_saved += 1
     hasInitImage = any(obj["init_image"] is not None for obj in metadata_entries)
 
     if task_data.show_only_filtered_image or filtered_images is images:
@@ -199,9 +199,8 @@ def save_images_to_disk(
             file_number,
             now=now,
             suffix="filtered",
-            number=files_saved,
+            prefix=prefix,
         )
-        files_saved += 1
 
         save_images(
             images,
@@ -247,6 +246,24 @@ def save_images_to_disk(
                         file_format=output_format.output_format,
                     )
 
+def generateNewPrefix(
+    metadata: list
+):
+    seed = metadata[0]['seed']
+
+    if seed in seed_index:
+        index = seed_index[seed]
+    else:
+        index = len(seed_index) + 1
+        seed_index[seed] = index
+
+    if seed in index_count:
+        count = index_count[seed] + 1
+    else:
+        count = 1
+    index_count[seed] = count
+
+    return f"{index}.{count}"
 
 def get_metadata_entries_for_request(
     req: GenerateImageRequest,
@@ -349,7 +366,7 @@ def make_filename_callback(
     folder_img_number: int,
     suffix=None,
     now=None,
-    number=None,
+    prefix=None,
 ):
     if now is None:
         now = time.time()
@@ -357,7 +374,7 @@ def make_filename_callback(
     def make_filename(i):
         name = format_file_name(filename_format, req, task_data, now, i, folder_img_number)
         name = name if suffix is None else f"{name}_{suffix}"
-        return name if number is None else f"{number}_{name}"
+        return name if prefix is None else f"{prefix}_{name}"
 
     return make_filename
 
