@@ -134,11 +134,14 @@
                 </div>
 
                 <button id="makeImage" class="primaryButton">Make Image</button>
-		<div id="render-buttons">
-		   <button id="stopImage" class="secondaryButton">Stop All</button>
-		   <button id="pause"><i class="fa-solid fa-pause"></i> Pause All</button>
-		   <button id="resume"><i class="fa-solid fa-play"></i> Resume</button>
-		</div>
+                <div id="render-buttons">
+                    <button id="stopImage" class="secondaryButton">Stop All</button>
+                    <button id="pause"><i class="fa-solid fa-pause"></i> Pause All</button>
+                    <button id="resume"><i class="fa-solid fa-play"></i> Resume</button>
+                </div>
+                <div id="state-buttons">
+                    <button id="states-button" class="tertiaryButton"><i class="fa-solid fa-floppy-disk"></i> <i class="fa-solid fa-file-import"></i> Saved configs</button>
+                </div>
             </div>
 
             <span class="line-separator"></span>
@@ -747,7 +750,7 @@
                 <option value="2">4</option>
                 <option value="3">5</option>
             </select>
-            <span style="float:right;"><label>Mode:</label>&nbsp;<select id="embeddings-mode"><option value="insert">Insert at cursor position</option><option value="append">Append at the end</option></select>
+            <span style="float:right;"><label>Mode:</label>&nbsp;<select id="embeddings-mode"><option value="insert">Insert at cursor position</option><option value="append">Append at the end</option></select></span>
         </div>
         <div id="embeddings-list">
         </div>
@@ -779,6 +782,27 @@
                     <button class="tertiaryButton" id="use-as-thumb-cancel">Cancel</button>
                 </div>
             </div>
+        </div>
+    </dialog>
+
+    <dialog id="states-dialog">
+        <div id="states-dialog-header" class="dialog-header">
+            <div class="dialog-header-left">
+                <h4>States</h4>
+                <span>Save the current configuration or load a saved one<span>
+            </div>
+            <div>
+                <i id="states-dialog-close-button" class="fa-solid fa-xmark fa-lg"></i>
+            </div>
+        </div>
+        <div>
+            <input id="states-save-box" type="text" spellcheck="false" autocomplete="off" placeholder="Name to save" inputmode="search">
+            <button id="states-save-button" class="tertiaryButton smallButton">
+                <i class="states-action-icon fa-solid fa-floppy-disk"></i> Save
+            </button>
+        </div>
+        <div id="states-list">
+        </div>
         </div>
     </dialog>
 

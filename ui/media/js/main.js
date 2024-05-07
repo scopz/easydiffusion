@@ -156,6 +156,13 @@ let makeImageBtn = document.querySelector("#makeImage")
 let stopImageBtn = document.querySelector("#stopImage")
 let renderButtons = document.querySelector("#render-buttons")
 
+let statesButton = document.querySelector("#states-button")
+let stateDialog = document.querySelector("#states-dialog")
+let stateDialogCloseBtn = stateDialog.querySelector("#states-dialog-close-button")
+let stateSaveBox = stateDialog.querySelector("#states-save-box")
+let stateSaveButton = stateDialog.querySelector("#states-save-button")
+let stateList = stateDialog.querySelector("#states-list")
+
 let imagesContainer = document.querySelector("#current-images")
 let initImagePreviewContainer = document.querySelector("#init_image_preview_container")
 let initImageClearBtn = document.querySelector(".init_image_clear")
@@ -2554,6 +2561,56 @@ function updateEmbeddingsList(filter = "") {
         })
 }
 
+
+function stateElementHtml(name, config) {
+
+    const topLevel = document.createElement("div")
+    topLevel.className = "state-card"
+
+    const button = document.createElement("button")
+    button.className = "state-button"
+    button.addEventListener("click", () => {
+        restoreTaskToUI({reqBody: config})
+        restoreTaskToUI({reqBody: config})
+        updateSettings()
+        stateDialog.close()
+    })
+
+    const title = document.createElement("span")
+    title.textContent = name
+
+    const subtitle = document.createElement("span")
+    subtitle.textContent = config.original_prompt
+
+
+    const i = document.createElement("i")
+    i.className = "fa-solid fa-file-import"
+
+    button.appendChild(i)
+    button.appendChild(title)
+    button.appendChild(subtitle)
+    topLevel.appendChild(button)
+
+    const deleteButton = document.createElement("button")
+    deleteButton.className = "state-remove-button"
+
+    deleteButton.addEventListener("click", () => {
+        const states = JSON.parse(localStorage.savedStates)
+        delete states[name]
+        localStorage.savedStates = JSON.stringify(states)
+
+        topLevel.parentElement.removeChild(topLevel)
+    })
+
+    const deleteI = document.createElement("i")
+    deleteI.className = "fa-solid fa-trash"
+
+    deleteButton.appendChild(deleteI)
+    topLevel.appendChild(deleteButton)
+
+    return topLevel
+}
+
 function showEmbeddingDialog() {
     updateEmbeddingsList()
     embeddingsSearchBox.value = ""
@@ -2582,6 +2639,54 @@ embeddingsSearchBox.addEventListener("input", (e) => {
 
 embeddingsCardSizeSelector.addEventListener("change", (e) => {
     resizeModifierCards(embeddingsCardSizeSelector.value)
+})
+
+statesButton.addEventListener("click", () => {
+    while (stateList.firstChild) {
+        stateList.removeChild(stateList.firstChild);
+    }
+
+    const states = JSON.parse(localStorage.savedStates || "{}")
+
+    Object.entries(states).forEach(([name, config]) => {
+        stateList.appendChild(stateElementHtml(name, config))
+    })
+
+    stateSaveBox.value = ""
+    stateDialog.showModal()
+})
+
+stateDialogCloseBtn.addEventListener("click", (e) => {
+    stateDialog.close()
+})
+
+function createState() {
+    const name = stateSaveBox.value
+    if (name) {
+        const states = JSON.parse(localStorage.savedStates || "{}")
+
+        if (!states[name]) {
+            const request = getCurrentUserRequest().reqBody;
+
+            ["seed", "block_nsfw", "metadata_output_format", "active_tags", "inactive_tags", "save_to_disk_path",
+            "show_only_filtered_image", "init_image", "prompt_strength", "mask", "strict_mask_border", "use_controlnet_model",
+            "control_image", "control_filter_to_apply", "stream_progress_updates"].forEach(i => delete request[i])
+
+            states[name] = request
+
+            localStorage.savedStates = JSON.stringify(states)
+
+            stateList.appendChild(stateElementHtml(name, request))
+        }
+
+    }
+}
+
+stateSaveButton.addEventListener("click", createState)
+stateSaveBox.addEventListener("keypress", (e) => {
+    if (e.key === "Enter") {
+        createState()
+    }
 })
 
 modalDialogCloseOnBackdropClick(embeddingsDialog)

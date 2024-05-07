@@ -248,6 +248,11 @@ div#render-buttons {
     margin-top: 4px;
     display: none;
 }
+div#state-buttons {
+    gap: 3px;
+    margin-top: 4px;
+    display: flex;
+}
 button#pause {
     flex-grow: 1;
     background: var(--accent-color);
@@ -256,6 +261,69 @@ button#resume {
     flex-grow: 1;
     background: var(--accent-color);
     display: none;
+}
+button#states-button {
+    flex-grow: 1;
+}
+.state-card {
+    position: relative;
+    box-sizing: content-box; /* fixes border misalignment */
+    box-shadow: 0 4px 8px 0 rgba(0,0,0,0.2);
+    border-radius: 7px;
+    margin: 3pt 3pt;
+    width: 50em;
+    height: 4em;
+    display: flex;
+    gap: 0px 0px;
+    grid-auto-flow: row;
+    border: 2px solid rgba(255, 255, 255, .05);
+    cursor: pointer;
+    z-index: 2;
+}
+.state-card .state-button {
+    white-space: nowrap;
+    overflow: hidden;
+    text-align: left;
+    text-overflow: ellipsis;
+    width: 100%;
+}
+
+.state-card .state-button > * {
+    vertical-align: middle;
+}
+
+.state-card .state-button > :first-child {
+    margin-left: 10px;
+}
+
+.state-card .state-button > :nth-child(2) {
+    font-weight: bold;
+    margin: 0 10px;
+}
+
+.state-card .state-button > :last-child {
+    opacity: 0.8;
+    font-size: 0.9em;
+}
+
+.state-card .state-remove-button {
+    padding: 0 10px;
+}
+
+.state-card .state-remove-button:hover {
+    background: var(--secondary-button-hover-background);
+}
+
+
+#states-list .modifier-card-image-container, #states-list .modifier-card-overlay {
+    display: none;
+}
+#states-list .modifier-card-container {
+    border-radius: 5px;
+}
+#states-list .modifier-card {
+    height: initial;
+    grid-template-rows: initial;
 }
 
 .flex-container {

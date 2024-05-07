@@ -110,6 +110,13 @@ async function initSettings() {
     loadSettings()
 }
 
+function updateSettings() {
+    SETTINGS_IDS_LIST.forEach((id) => {
+        var element = document.getElementById(id)
+        element.dispatchEvent(new Event("change"))
+    })
+}
+
 function getSetting(element) {
     if (element.dataset && "path" in element.dataset) {
         return element.dataset.path
