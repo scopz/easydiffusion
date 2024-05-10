@@ -287,6 +287,7 @@ function onRenderTaskCompleted(task, reqBody, instance, outputContainer, stepUpd
 
     task.isProcessing = false
     task["stopTask"].innerHTML = '<i class="fa-solid fa-trash-can"></i> Remove'
+    task["stopTaskBelow"].style.display = 'block'
     task["taskStatusLabel"].style.display = "none"
 
     let time = millisecondsToStr(Date.now() - task.startTime)
@@ -348,6 +349,7 @@ function abortTask(task) {
     task.progressBar.classList.remove("active")
     task["taskStatusLabel"].style.display = "none"
     task["stopTask"].innerHTML = '<i class="fa-solid fa-trash-can"></i> Remove'
+    task["stopTaskBelow"].style.display = 'block'
     if (!task.instances?.some((r) => r.isPending)) {
         return
     }

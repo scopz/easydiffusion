@@ -831,7 +831,7 @@ div.img-preview img {
     background: var(--button-hover-background);
     color: var(--accent-text-color);
 }
-.useSettings {
+.useSettings, .stopTaskBelow {
     margin-right: 6pt;
     float: right;
 }

@@ -1175,6 +1175,7 @@ function createTask(task) {
                                 <i class="drag-handle fa-solid fa-grip"></i>
                                 <div class="taskStatusLabel">Enqueued</div>
                                 <button class="secondaryButton stopTask"><i class="fa-solid fa-xmark"></i> Cancel</button>
+                                <button class="secondaryButton stopTaskBelow"><i class="fa-solid fa-trash-can"></i> Remove this and all below</button>
                                 <button class="tertiaryButton useSettings"><i class="fa-solid fa-redo"></i> Use these settings</button>
                                 <div class="preview-prompt"></div>
                                 <div class="taskConfig">${taskConfig}</div>
@@ -1252,6 +1253,28 @@ function createTask(task) {
         } else {
             removeTask(taskEntry)
         }
+    })
+
+    task["stopTaskBelow"] = taskEntry.querySelector(".stopTaskBelow")
+    task["stopTaskBelow"].style.display = 'none'
+
+    task["stopTaskBelow"].addEventListener("click", (e) => {
+        e.stopPropagation()
+
+        shiftOrConfirm(e, "Remove this and all the results below?", function() {
+            let child = imagePreviewContent.lastElementChild
+
+            while (true) {
+                const previous = child.previousElementSibling
+
+                if (child.classList.contains("imageTaskContainer")) {
+                    removeTask(child)
+                }
+
+                if (child == taskEntry || !previous) break
+                child = previous
+            }
+        })
     })
 
     task["useSettings"] = taskEntry.querySelector(".useSettings")
